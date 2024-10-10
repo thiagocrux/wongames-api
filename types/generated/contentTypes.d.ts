@@ -485,6 +485,181 @@ export interface PluginUsersPermissionsUser
   };
 }
 
+export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
+  collectionName: 'categories';
+  info: {
+    singularName: 'category';
+    pluralName: 'categories';
+    displayName: 'category';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    slug: Schema.Attribute.UID<'name'>;
+    games: Schema.Attribute.Relation<'manyToMany', 'api::game.game'>;
+    createdAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    publishedAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::category.category'
+    >;
+  };
+}
+
+export interface ApiDeveloperDeveloper extends Struct.CollectionTypeSchema {
+  collectionName: 'developers';
+  info: {
+    singularName: 'developer';
+    pluralName: 'developers';
+    displayName: 'developer';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    slug: Schema.Attribute.UID<'name'> & Schema.Attribute.Required;
+    games: Schema.Attribute.Relation<'manyToMany', 'api::game.game'>;
+    createdAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    publishedAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::developer.developer'
+    >;
+  };
+}
+
+export interface ApiGameGame extends Struct.CollectionTypeSchema {
+  collectionName: 'games';
+  info: {
+    singularName: 'game';
+    pluralName: 'games';
+    displayName: 'game';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    slug: Schema.Attribute.UID<'name'> & Schema.Attribute.Required;
+    short_description: Schema.Attribute.Text & Schema.Attribute.Required;
+    description: Schema.Attribute.Blocks;
+    price: Schema.Attribute.Decimal &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<0>;
+    release_date: Schema.Attribute.Date;
+    rating: Schema.Attribute.Enumeration<
+      ['BR0', 'BR10', 'BR12', 'BR14', 'BR16', 'BR18']
+    >;
+    cover: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
+    gallery: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    categories: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::category.category'
+    >;
+    developers: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::developer.developer'
+    >;
+    platforms: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::platform.platform'
+    >;
+    publisher: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::publisher.publisher'
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    publishedAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::game.game'>;
+  };
+}
+
+export interface ApiPlatformPlatform extends Struct.CollectionTypeSchema {
+  collectionName: 'platforms';
+  info: {
+    singularName: 'platform';
+    pluralName: 'platforms';
+    displayName: 'platform';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    slug: Schema.Attribute.UID<'name'> & Schema.Attribute.Required;
+    games: Schema.Attribute.Relation<'manyToMany', 'api::game.game'>;
+    createdAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    publishedAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::platform.platform'
+    >;
+  };
+}
+
+export interface ApiPublisherPublisher extends Struct.CollectionTypeSchema {
+  collectionName: 'publishers';
+  info: {
+    singularName: 'publisher';
+    pluralName: 'publishers';
+    displayName: 'publisher';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    slug: Schema.Attribute.UID<'name'> & Schema.Attribute.Required;
+    games: Schema.Attribute.Relation<'oneToMany', 'api::game.game'>;
+    createdAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    publishedAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::publisher.publisher'
+    >;
+  };
+}
+
 export interface AdminPermission extends Struct.CollectionTypeSchema {
   collectionName: 'admin_permissions';
   info: {
@@ -860,6 +1035,11 @@ declare module '@strapi/strapi' {
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
+      'api::category.category': ApiCategoryCategory;
+      'api::developer.developer': ApiDeveloperDeveloper;
+      'api::game.game': ApiGameGame;
+      'api::platform.platform': ApiPlatformPlatform;
+      'api::publisher.publisher': ApiPublisherPublisher;
       'admin::permission': AdminPermission;
       'admin::user': AdminUser;
       'admin::role': AdminRole;
