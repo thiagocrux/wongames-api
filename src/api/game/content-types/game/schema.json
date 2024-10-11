@@ -25,9 +25,6 @@
       "type": "text",
       "required": true
     },
-    "description": {
-      "type": "blocks"
-    },
     "price": {
       "type": "decimal",
       "required": true,
@@ -90,6 +87,14 @@
       "relation": "manyToOne",
       "target": "api::publisher.publisher",
       "inversedBy": "games"
+    },
+    "description": {
+      "type": "customField",
+      "options": {
+        "output": "HTML",
+        "preset": "rich"
+      },
+      "customField": "plugin::ckeditor.CKEditor"
     }
   }
 }

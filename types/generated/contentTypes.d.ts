@@ -560,7 +560,6 @@ export interface ApiGameGame extends Struct.CollectionTypeSchema {
     name: Schema.Attribute.String & Schema.Attribute.Required;
     slug: Schema.Attribute.UID<'name'> & Schema.Attribute.Required;
     short_description: Schema.Attribute.Text & Schema.Attribute.Required;
-    description: Schema.Attribute.Blocks;
     price: Schema.Attribute.Decimal &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<0>;
@@ -589,6 +588,14 @@ export interface ApiGameGame extends Struct.CollectionTypeSchema {
       'manyToOne',
       'api::publisher.publisher'
     >;
+    description: Schema.Attribute.RichText &
+      Schema.Attribute.CustomField<
+        'plugin::ckeditor.CKEditor',
+        {
+          output: 'HTML';
+          preset: 'rich';
+        }
+      >;
     createdAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     publishedAt: Schema.Attribute.DateTime;
