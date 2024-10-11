@@ -12,6 +12,13 @@ export default {
     menu: {
       logo: Icon,
     },
+    translations: {
+      en: {
+        "Auth.form.welcome.title": "Welcome to Won Games!",
+        "Auth.form.welcome.subtitle": "Log in to your account",
+        "app.components.LeftMenu.navbrand.title": "Won Games Dashboard"
+      },
+    },
     locales: [],
   },
   bootstrap() {},
