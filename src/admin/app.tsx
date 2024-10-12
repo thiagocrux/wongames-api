@@ -31,6 +31,10 @@ export default {
         }
       },
     },
+    tutorials: false,
+    notifications: {
+      releases: false,
+    },
     locales: [],
   },
   bootstrap() {},
