@@ -19,7 +19,7 @@ async function getGameInfo(slug) {
   const dom = new JSDOM(body.data);
   const rawDescription = dom.window.document.querySelector(".description");
   const description = rawDescription.innerHTML;
-  const shortDescription = rawDescription.textContent.slice(0, 160);
+  const short_description = rawDescription.textContent.slice(0, 160);
 
   const ratingElement = dom.window.document.querySelector(
     ".age-restrictions__icon use"
@@ -27,7 +27,7 @@ async function getGameInfo(slug) {
 
   return {
     description,
-    shortDescription,
+    short_description,
     rating: ratingElement
       ? ratingElement
           .getAttribute("xlink:href")
@@ -95,6 +95,51 @@ async function createManyToManyData(products) {
   ]);
 }
 
+async function createGames(products) {
+  await Promise.all(
+    products.map(async (product) => {
+      const item = await getByName(product.title, GAME_SERVICE);
+
+      if (!item) {
+        console.info(`Creating: ${product.title}...`);
+
+        const game = await strapi.service(GAME_SERVICE).create({
+          data: {
+            name: product.title,
+            slug: product.slug,
+            price: product.price.finalMoney.amount,
+            release_date: new Date(product.releaseDate),
+            developers: await Promise.all(
+              product.developers.map((name) =>
+                getByName(name, DEVELOPER_SERVICE)
+              )
+            ),
+            publishers: await Promise.all(
+              product.publishers.map((name) =>
+                getByName(name, PUBLISHER_SERVICE)
+              )
+            ),
+            categories: await Promise.all(
+              product.genres.map(({ name }) =>
+                getByName(name, CATEGORY_SERVICE)
+              )
+            ),
+            platforms: await Promise.all(
+              product.operatingSystems.map((name) =>
+                getByName(name, PLATFORM_SERVICE)
+              )
+            ),
+            ...(await getGameInfo(product.slug)),
+            publishedAt: new Date(),
+          },
+        });
+
+        return game;
+      }
+    })
+  );
+}
+
 export default factories.createCoreService(GAME_SERVICE, () => ({
   async populate(params) {
     const gogApiUrl = `https://catalog.gog.com/v1/catalog?limit=48&order=desc%3Atrending`;
@@ -103,6 +148,7 @@ export default factories.createCoreService(GAME_SERVICE, () => ({
       data: { products },
     } = await axios.get(gogApiUrl);
 
-    await createManyToManyData(products);
+    await createManyToManyData([products[0], products[1]]);
+    await createGames([products[0], products[1]])
   },
 }));
