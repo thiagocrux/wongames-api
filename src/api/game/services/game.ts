@@ -132,7 +132,7 @@ async function setImage({ image, game, field = "cover" }) {
     formData.append("field", field);
     formData.append("files", buffer, { filename: `${game.slug}.jpg` });
 
-    console.info(`Uploading ${field} image: ${game.slug}.png`);
+    console.info(`Uploading ${field} image: ${game.slug}.jpg`);
 
     await axios({
       method: "POST",
