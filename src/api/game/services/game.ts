@@ -6,6 +6,7 @@ import axios from "axios";
 import { JSDOM } from "jsdom";
 import slugify from "slugify";
 import { factories } from "@strapi/strapi";
+import qs from "qs";
 
 const GAME_SERVICE = "api::game.game";
 const PUBLISHER_SERVICE = "api::publisher.publisher";
@@ -132,7 +133,7 @@ async function setImage({ image, game, field = "cover" }) {
     formData.append("field", field);
     formData.append("files", buffer, { filename: `${game.slug}.jpg` });
 
-    console.info(`Uploading ${field} image: ${game.slug}.jpg`);
+    console.info(`Uploading ${field} image: ${game.slug}.png`);
 
     await axios({
       method: "POST",
@@ -209,7 +210,7 @@ async function createGames(products) {
 
 export default factories.createCoreService(GAME_SERVICE, () => ({
   async populate(params) {
-    const gogApiUrl = `https://catalog.gog.com/v1/catalog?limit=48&order=desc%3Atrending`;
+    const gogApiUrl = `https://catalog.gog.com/v1/catalog?${qs.stringify(params)}`;
 
     const {
       data: { products },
