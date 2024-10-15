@@ -95,6 +95,30 @@ async function createManyToManyData(products) {
   ]);
 }
 
+async function setImage({ image, game, field = "cover" }) {
+  const { data } = await axios.get(image, { responseType: "arraybuffer" });
+  const buffer = Buffer.from(data, "base64");
+
+  const FormData = require("form-data");
+  const formData: any = new FormData();
+
+  formData.append("refId", game.id);
+  formData.append("ref", `${GAME_SERVICE}`);
+  formData.append("field", field);
+  formData.append("files", buffer, { filename: `${game.slug}.jpg` });
+
+  console.info(`Uploading ${field} image: ${game.slug}.png`);
+
+  await axios({
+    method: "POST",
+    url: `http://localhost:1337/api/upload`,
+    data: formData,
+    headers: {
+      "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
+    },
+  });
+}
+
 async function createGames(products) {
   await Promise.all(
     products.map(async (product) => {
@@ -134,6 +158,21 @@ async function createGames(products) {
           },
         });
 
+        await setImage({ image: product.coverHorizontal, game });
+
+        await Promise.all(
+          product.screenshots.map((url) =>
+            setImage({
+              image: `${url.replace(
+                "{formatter}",
+                "product_card_v2_mobile_slider_639"
+              )}`,
+              game,
+              field: "gallery",
+            })
+          )
+        );
+
         return game;
       }
     })
@@ -148,7 +187,7 @@ export default factories.createCoreService(GAME_SERVICE, () => ({
       data: { products },
     } = await axios.get(gogApiUrl);
 
-    await createManyToManyData([products[0], products[1]]);
-    await createGames([products[0], products[1]])
+    await createManyToManyData([...products.slice(0, 5)]);
+    await createGames([...products.slice(0, 5)]);
   },
 }));
